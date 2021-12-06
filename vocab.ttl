@@ -40,13 +40,13 @@ news:Auteur a rdfs:Class ;
 
 news:Nom a rdf:Property ;
     rdfs:label "Nom" ;
-    rdfs:comment "L'article est créé par cette personne" ;
+    rdfs:comment "le nom de  cette personne" ;
     rdfs:domain o:Resource ;
     rdfs:isDefinedBy news: . 
 
 news:Prenom a rdf:Property ;
     rdfs:label "Prenom" ;
-    rdfs:comment "L'article est créé par cette personne" ;
+    rdfs:comment "le prenom de cette personne" ;
     rdfs:domain o:Resource ;
     rdfs:isDefinedBy news: . 
 
