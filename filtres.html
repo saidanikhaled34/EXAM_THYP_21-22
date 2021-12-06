@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html>
+    <head> 
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title> THYP 21-21 </title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <h2> Examen THYP 21-22 </h2>
+            </div>
+            <hr>
+            <div class="d-inline-flex">
+                <div> 
+                    <div class="dropdown" style="margin: 20px;">
+                        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                            Sujets
+                        </button>
+                        <div class="dropdown-menu" id="subjectFilter">
+                            <a class="dropdown-item" onclick="showFiltreItems('Tous')"> Tous </a>
+                        </div>
+                    </div>
+               </div>
+            </div>
+        </div>
+        <div id="items"> </div>
+    </body>
+    <script>
+        
+        let api = "https://polemika.univ-paris8.fr/omk/api/items?item_set_id=2"; 
+        let apiData; 
+
+        function getData(urlApi) {
+            d3.queue().defer(d3.json, api).awaitAll(function(error, data) {
+                if (error) throw error; 
+                apiData = data; 
+                console.log(data); 
+                showItems(data); 
+                showSujets(data); 
+            })
+        }
+
+        function showItems(data) {
+
+            data[0].forEach(function(d) {  
+                var card = d3.select('#items').append('div')
+                    .attr('class', 'justify-content-center d-inline-block')
+                    .style('margin', '30px').append('div')
+                    .attr('class', 'card border-dark mb-3 text-center')
+                    .style('width', '21rem')
+
+                card.append('div').attr('class', 'card-header').append('h5').text(d['o:title'])
+
+                d3.queue().defer(d3.json, d['o:media'][0]['@id']).awaitAll(function(error, imgData) {
+                    if (error) throw error; 
+                    medias = imgData; 
+
+                    var cardBody = card.append('div').attr('class', 'card-body')
+                        cardBody.append('img').attr('class', 'card-img-top')
+                        .style('max-height', '100%').style('max-width', '100%')
+                        .attr('src', medias[0]['o:thumbnail_urls']['large'])  
+                })
+
+                card.append('div').attr('class', 'card-footer').text("Identifiant : " + d['o:id'])
+            });
+        }
+
+        function showSujets(data) {
+            let subjects = []; 
+            data[0].forEach(d => {
+                if (subjects.includes(d['dcterms:subject'][0]['@value'])) return; 
+                else subjects.push(d['dcterms:subject'][0]['@value']); 
+            })
+
+            subjects.forEach(s => {
+                d3.select('#subjectFilter').append('a').attr('class', 'dropdown-item')
+                    .on('click', function() { 
+                        showFiltreItems(s); 
+                    })
+                    .text(s); 
+            })
+        }
+
+        function showFiltreItems(sujet) {
+            let cards = document.getElementById('items');
+            cards.innerHTML = ''; 
+            if (sujet === 'Tous') {
+                setTimeout(() => {
+                    showItems(apiData); 
+                }, 1000);
+            } 
+            else {
+                setTimeout(() => {
+                    let data = [apiData[0].filter(d => d['dcterms:subject'][0]['@value'] === sujet)]; 
+                    showItems(data)
+                }, 1000); 
+            }
+        }
+
+        getData(api); 
+
+    </script>
+</html>
