@@ -10,3 +10,5 @@ https://polemika.univ-paris8.fr/omk/api/items?item_set_id=2
 https://saidanikhaled34.github.io/EXAM_THYP_21-22/items.html
 ### filter
 https://saidanikhaled34.github.io/EXAM_THYP_21-22/filtres.html
+### Vocab.tt
+https://saidanikhaled34.github.io/EXAM_THYP_21-22/vocab.ttl
